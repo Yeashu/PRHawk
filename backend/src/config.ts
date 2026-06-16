@@ -19,6 +19,6 @@ export const config = {
 
     conventionsPath : "conventions/rules.json",
     maxFilesContextChars : 12000,
-    maxMergedPR : 10
+    maxMergedPr : 10
 
 }
