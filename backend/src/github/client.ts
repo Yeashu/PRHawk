@@ -3,7 +3,7 @@ import { config } from "../config.js"
 
 let octokit : Octokit | null = null
 
-export function getOctokit() : Octokit {
+export function getOctokitClient() : Octokit {
     if(!octokit){
         octokit = new Octokit({auth : config.githubToken})
     }

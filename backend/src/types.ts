@@ -9,7 +9,7 @@ export interface PullRequestRef {
 export interface ParsedFile {
     path : string,
     patch : string,
-    addedLine : number[];
+    addedLines : number[];
 }
 
 export interface ConventionRule {
