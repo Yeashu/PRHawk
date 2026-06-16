@@ -1,11 +1,10 @@
-import { join } from "node:path";
 import type { ConventionRule, FileContext } from "../types.js";
 
 function numberLines(content: string): string {
-  return (
-    content.split("\n").map((line, i) => `${i + 1}\t${line}`),
-    join("\n")
-  );
+  return content
+    .split("\n")
+    .map((line, i) => `${i + 1}\t${line}`)
+    .join("\n");
 }
 
 const SEVERITY_DEFINITIONS = `Severity taxonomy (tag every comment with exactly one):

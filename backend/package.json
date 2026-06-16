@@ -4,7 +4,7 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "start": "tsx src/web.ts",
+    "start": "tsx src/index.ts",
     "review": "tsx src/index.ts review",
     "learn": "tsx src/index.ts learn"
   },

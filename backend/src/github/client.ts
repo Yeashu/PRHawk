@@ -5,7 +5,7 @@ let octokit : Octokit | null = null
 
 export function getOctokitClient() : Octokit {
     if(!octokit){
-        octokit = new Octokit({auth : config.githubToken})
+        octokit = new Octokit({auth : config.githubToken()})
     }
     return octokit
 }
