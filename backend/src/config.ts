@@ -13,7 +13,7 @@ function required(name : string){
 export const config = {
 
     apiKey : () => {
-        const key = process.env.GROQ_API_KEY || process.env.OPENROUTER_API_KEY;
+        const key = process.env.OPENROUTER_API_KEY || process.env.GROQ_API_KEY;
         if (!key) throw new Error("Neither GROQ_API_KEY nor OPENROUTER_API_KEY environment variable is defined.");
         return key;
     },
