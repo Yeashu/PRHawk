@@ -4,22 +4,31 @@ import {
   BookOpen, 
   LogOut, 
   Lock, 
-  ShieldAlert, 
+  ShieldCheck, 
   Info,
   CheckCircle,
   XCircle,
-  HelpCircle
+  HelpCircle,
+  Settings
 } from "lucide-react";
 import ReviewTab from "./components/ReviewTab";
 import RulesTab from "./components/RulesTab";
-import AuthOverlay from "./components/AuthOverlay";
+import OnboardingOverlay from "./components/OnboardingOverlay";
 
 export default function App() {
-  // Authentication states
+  // Authentication & Onboarding states
   const [authRequired, setAuthRequired] = useState(false);
   const [accessKey, setAccessKey] = useState(localStorage.getItem("prhawk_access_key") || "");
   const [authError, setAuthError] = useState("");
   const [authLoading, setAuthLoading] = useState(true);
+  
+  // Onboarding state
+  const [onboardingComplete, setOnboardingComplete] = useState(
+    localStorage.getItem("code_reviewer_onboarding_complete") === "true"
+  );
+  
+  // Settings modal state
+  const [showSettings, setShowSettings] = useState(false);
 
   // Layout states
   const [activeTab, setActiveTab] = useState("review");
@@ -36,7 +45,7 @@ export default function App() {
     }, 4000);
   };
 
-  // Check auth requirement on startup
+  // Check auth status on startup
   useEffect(() => {
     const checkAuthStatus = async () => {
       try {
@@ -53,6 +62,7 @@ export default function App() {
             setAuthError("Saved access key is invalid. Please log in again.");
             setAccessKey("");
             localStorage.removeItem("prhawk_access_key");
+            setOnboardingComplete(false); // Force re-auth/onboarding
           }
         }
       } catch (err) {
@@ -66,35 +76,48 @@ export default function App() {
     checkAuthStatus();
   }, [accessKey]);
 
-  // Ensure body dark mode is always disabled since the dark mode feature is removed
+  // Ensure dark mode is always disabled since the dark mode feature is removed
   useEffect(() => {
     document.body.classList.remove("dark");
     localStorage.removeItem("prhawk_theme");
   }, []);
 
-  const handleSaveKey = async (key) => {
+  const handleCompleteOnboarding = async (key) => {
     setAuthError("");
-    try {
-      // Test the input key
-      const res = await fetch("/api/conventions", {
-        headers: { "x-access-key": key }
-      });
+    if (authRequired) {
+      if (!key) {
+        setAuthError("Access key is required.");
+        return;
+      }
+      
+      try {
+        // Test the input key
+        const res = await fetch("/api/conventions", {
+          headers: { "x-access-key": key }
+        });
 
-      if (res.status === 401) {
-        setAuthError("Access key is invalid. Please try again.");
-      } else {
+        if (res.status === 401) {
+          setAuthError("Access key is invalid. Please try again.");
+          return;
+        }
+        
         localStorage.setItem("prhawk_access_key", key);
         setAccessKey(key);
-        addToast("Authenticated successfully!", "success");
+      } catch (err) {
+        setAuthError("Failed to verify access key. Is the server running?");
+        return;
       }
-    } catch (err) {
-      setAuthError("Failed to verify access key. Is the server running?");
     }
+    
+    setOnboardingComplete(true);
+    addToast("Setup completed successfully!", "success");
   };
 
   const handleLogout = () => {
     localStorage.removeItem("prhawk_access_key");
+    localStorage.removeItem("code_reviewer_onboarding_complete");
     setAccessKey("");
+    setOnboardingComplete(false);
     addToast("Logged out successfully.", "success");
   };
 
@@ -107,13 +130,27 @@ export default function App() {
     );
   }
 
-  // Determine whether to display the authentication form
-  const showAuthForm = authRequired && !accessKey;
+  // Display onboarding wizard on first visit, or settings override
+  const showOnboarding = !onboardingComplete || (authRequired && !accessKey);
 
   return (
     <div className="app-container">
-      {showAuthForm && (
-        <AuthOverlay onSave={handleSaveKey} errorMsg={authError} />
+      {showOnboarding && (
+        <OnboardingOverlay 
+          authRequired={authRequired} 
+          onComplete={handleCompleteOnboarding} 
+          errorMsg={authError} 
+        />
+      )}
+
+      {showSettings && (
+        <OnboardingOverlay
+          settingsMode={true}
+          onClose={() => {
+            setShowSettings(false);
+            addToast("Settings updated!", "success");
+          }}
+        />
       )}
 
       {/* Header */}
@@ -150,6 +187,15 @@ export default function App() {
               Rules Manager
             </button>
           </div>
+
+          {/* Settings Button */}
+          <button 
+            onClick={() => setShowSettings(true)} 
+            className="icon-btn" 
+            title="Workspace Settings"
+          >
+            <Settings size={18} />
+          </button>
 
           {/* Logout button if authenticated */}
           {authRequired && accessKey && (

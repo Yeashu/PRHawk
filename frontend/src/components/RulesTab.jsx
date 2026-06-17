@@ -43,8 +43,15 @@ export default function RulesTab({ accessKey, addToast }) {
   const fetchConventions = async () => {
     setLoading(true);
     try {
+      const customGithubToken = localStorage.getItem("code_reviewer_github_token") || "";
+      const customOpenRouterKey = localStorage.getItem("code_reviewer_openrouter_key") || "";
+
       const response = await fetch("/api/conventions", {
-        headers: accessKey ? { "x-access-key": accessKey } : {}
+        headers: {
+          ...(accessKey ? { "x-access-key": accessKey } : {}),
+          ...(customGithubToken ? { "x-github-token": customGithubToken } : {}),
+          ...(customOpenRouterKey ? { "x-openrouter-key": customOpenRouterKey } : {})
+        }
       });
       const data = await response.json();
       if (!response.ok) {
@@ -68,11 +75,16 @@ export default function RulesTab({ accessKey, addToast }) {
 
     setLearning(true);
     try {
+      const customGithubToken = localStorage.getItem("code_reviewer_github_token") || "";
+      const customOpenRouterKey = localStorage.getItem("code_reviewer_openrouter_key") || "";
+
       const response = await fetch("/api/learn", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          ...(accessKey ? { "x-access-key": accessKey } : {})
+          ...(accessKey ? { "x-access-key": accessKey } : {}),
+          ...(customGithubToken ? { "x-github-token": customGithubToken } : {}),
+          ...(customOpenRouterKey ? { "x-openrouter-key": customOpenRouterKey } : {})
         },
         body: JSON.stringify({ repo: repoInput.trim() })
       });
@@ -95,11 +107,16 @@ export default function RulesTab({ accessKey, addToast }) {
 
   const saveRulesToServer = async (updatedRules) => {
     try {
+      const customGithubToken = localStorage.getItem("code_reviewer_github_token") || "";
+      const customOpenRouterKey = localStorage.getItem("code_reviewer_openrouter_key") || "";
+
       const response = await fetch("/api/conventions", {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
-          ...(accessKey ? { "x-access-key": accessKey } : {})
+          ...(accessKey ? { "x-access-key": accessKey } : {}),
+          ...(customGithubToken ? { "x-github-token": customGithubToken } : {}),
+          ...(customOpenRouterKey ? { "x-openrouter-key": customOpenRouterKey } : {})
         },
         body: JSON.stringify({ rules: updatedRules })
       });

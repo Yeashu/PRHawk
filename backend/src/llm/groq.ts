@@ -4,7 +4,13 @@ import { config } from "../config.js";
 
 let client: OpenAI | null = null;
 
-function getOpenAIClient(): OpenAI {
+function getOpenAIClient(customKey?: string, customBaseURL?: string): OpenAI {
+  if (customKey) {
+    return new OpenAI({
+      apiKey: customKey,
+      baseURL: customBaseURL || "https://openrouter.ai/api/v1",
+    });
+  }
   if (!client) {
     client = new OpenAI({
       apiKey: config.apiKey(),
@@ -19,10 +25,12 @@ export async function complete<T extends z.ZodTypeAny>(
   system: string,
   user: string,
   schema: T,
+  customKey?: string,
+  customBaseURL?: string,
 ): Promise<z.infer<T>> {
   const shape = JSON.stringify(z.toJSONSchema(schema));
 
-  const response = await getOpenAIClient().chat.completions.create({
+  const response = await getOpenAIClient(customKey, customBaseURL).chat.completions.create({
     model: config.model,
     temperature: 0.2,
     max_tokens: 3000,

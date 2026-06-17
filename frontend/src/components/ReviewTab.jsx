@@ -59,11 +59,16 @@ export default function ReviewTab({ accessKey, addToast }) {
     setResult(null);
 
     try {
+      const customGithubToken = localStorage.getItem("code_reviewer_github_token") || "";
+      const customOpenRouterKey = localStorage.getItem("code_reviewer_openrouter_key") || "";
+
       const response = await fetch("/api/review", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          ...(accessKey ? { "x-access-key": accessKey } : {})
+          ...(accessKey ? { "x-access-key": accessKey } : {}),
+          ...(customGithubToken ? { "x-github-token": customGithubToken } : {}),
+          ...(customOpenRouterKey ? { "x-openrouter-key": customOpenRouterKey } : {})
         },
         body: JSON.stringify({ url: url.trim() })
       });

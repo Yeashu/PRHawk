@@ -38,17 +38,21 @@ function startServer(): void {
         return;
       }
 
+      const customToken = req.header("x-github-token") || undefined;
+      const customLlmKey = req.header("x-openrouter-key") || undefined;
+      const customLlmBase = customLlmKey ? "https://openrouter.ai/api/v1" : undefined;
+
       const ref = parseUrl(url.trim());
-      const { pr, files } = await fetchPullRequest(ref);
-      const contexts = await buildFileContexts(ref, pr, files);
+      const { pr, files } = await fetchPullRequest(ref, customToken);
+      const contexts = await buildFileContexts(ref, pr, files, customToken);
       if (contexts.length === 0) {
         res.json({ summary: null, comments: [], message: "No reviewable changes found in this PR." });
         return;
       }
 
       const conventions = await loadConventions();
-      const result = await reviewDiff(pr.title ?? "", pr.body ?? "", contexts, conventions);
-      await postReview(ref, pr.head.sha, result);
+      const result = await reviewDiff(pr.title ?? "", pr.body ?? "", contexts, conventions, customLlmKey, customLlmBase);
+      await postReview(ref, pr.head.sha, result, customToken);
 
       res.json({ ...result, conventionsUsed: conventions.length, prUrl: url.trim() });
     } catch (err) {
@@ -64,7 +68,12 @@ function startServer(): void {
         res.status(400).json({ error: "Provide a repo as 'owner/repo' or a GitHub URL." });
         return;
       }
-      const rules = await learnConventions(parsed.owner, parsed.repo);
+
+      const customToken = req.header("x-github-token") || undefined;
+      const customLlmKey = req.header("x-openrouter-key") || undefined;
+      const customLlmBase = customLlmKey ? "https://openrouter.ai/api/v1" : undefined;
+
+      const rules = await learnConventions(parsed.owner, parsed.repo, customToken, customLlmKey, customLlmBase);
       res.json({ rules });
     } catch (err) {
       res.status(500).json({ error: err instanceof Error ? err.message : String(err) });
