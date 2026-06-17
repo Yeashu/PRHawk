@@ -27,19 +27,7 @@ function startServer(): void {
   const dir = path.dirname(fileURLToPath(import.meta.url));
   app.use(express.static(path.join(dir, "..", "..", "frontend", "dist")));
   app.get("/api/auth-required", (_req, res) => {
-    res.json({ authRequired: config.accessKey.length > 0 });
-  });
-
-  app.use("/api", (req, res, next) => {
-    if (!config.accessKey) {
-      next();
-      return;
-    }
-    if (req.header("x-access-key") === config.accessKey) {
-      next();
-      return;
-    }
-    res.status(401).json({ error: "Invalid or missing access key." });
+    res.json({ authRequired: false });
   });
 
   app.post("/api/review", async (req, res) => {
