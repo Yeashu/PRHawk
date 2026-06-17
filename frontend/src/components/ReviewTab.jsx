@@ -130,7 +130,7 @@ export default function ReviewTab({ accessKey, addToast }) {
     <div style={{ display: "flex", flexDirection: "column", gap: "2rem" }}>
       {/* Search Input Card */}
       <div className="review-input-section">
-        <h2 className="review-input-title">AI Code Review Copilot</h2>
+        <h2 className="review-input-title">Code Reviewer</h2>
         <p className="review-input-subtitle">Paste a GitHub pull request URL to audit changes against conventions</p>
         
         <form onSubmit={handleReview}>

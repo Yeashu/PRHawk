@@ -54,35 +54,6 @@
   --shadow-lg: 0 12px 32px rgba(28, 23, 20, 0.08);
 }
 
-/* Dark Mode Tokens */
-body.dark {
-  --bg: #12100E;
-  --surface: #1A1715;
-  --surface-alt: #24201D;
-  --surface-hover: #2E2925;
-
-  --border: #332D28;
-  --border-mid: #473F3A;
-  --border-focus: #B84A22;
-
-  --t1: #F4EFE6;
-  --t2: #9E9187;
-  --t3: #70655D;
-
-  --terra-dim: rgba(184, 74, 34, 0.15);
-
-  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.2);
-  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.3);
-  --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.4);
-
-  --color-bug-dim: rgba(184, 74, 34, 0.12);
-  --color-security-dim: rgba(184, 74, 34, 0.12);
-  --color-performance-dim: rgba(148, 100, 34, 0.12);
-  --color-style-dim: rgba(42, 106, 140, 0.12);
-  --color-suggestion-dim: rgba(122, 112, 104, 0.12);
-  --color-safe-dim: rgba(45, 122, 77, 0.12);
-}
-
 /* Base Styles */
 * {
   box-sizing: border-box;
@@ -126,40 +97,58 @@ button, input, textarea, select {
 .brand {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: 0.85rem;
   cursor: pointer;
+  user-select: none;
 }
 
-.brand-icon {
-  width: 40px;
-  height: 40px;
-  background-color: var(--terra);
-  color: #FFFFFF;
-  border-radius: var(--r-md);
+/* Premium Geometric Brand Logo */
+.brand-logo-mark {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: 700;
-  font-size: 1.25rem;
-  box-shadow: var(--shadow-sm);
-  transition: transform var(--transition-fast);
+  transition: transform var(--transition-normal);
+  padding: 0.2rem;
 }
 
-.brand:hover .brand-icon {
-  transform: scale(1.05) rotate(-3deg);
+.brand:hover .brand-logo-mark {
+  transform: scale(1.08) rotate(5deg);
+}
+
+.brand-title {
+  display: flex;
+  flex-direction: column;
+  gap: 0.05rem;
 }
 
 .brand-title h1 {
-  font-size: 1.5rem;
-  font-weight: 700;
+  font-size: 1.55rem;
+  font-weight: 800; /* Extra bold for "Code" */
   color: var(--t1);
-  letter-spacing: -0.02em;
+  letter-spacing: -0.035em;
+  font-family: var(--font-sans);
+  line-height: 1;
 }
 
-.brand-title p {
-  font-size: 0.8rem;
+.brand-title-accent {
+  font-weight: 400; /* Elegant lighter weight for "Reviewer" */
+  color: var(--terra); /* Brand terracotta color */
+  margin-left: 0.05rem;
+}
+
+.brand-title-dot {
+  color: var(--terra);
+  font-weight: 800;
+}
+
+.brand-subtitle {
+  font-size: 0.68rem;
+  font-weight: 600;
+  text-transform: uppercase;
   color: var(--t3);
-  font-weight: 500;
+  letter-spacing: 0.12em;
+  line-height: 1;
+  margin-top: 0.15rem;
 }
 
 .header-actions {

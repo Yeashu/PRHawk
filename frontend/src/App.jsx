@@ -2,8 +2,6 @@ import React, { useState, useEffect } from "react";
 import { 
   GitPullRequest, 
   BookOpen, 
-  Sun, 
-  Moon, 
   LogOut, 
   Lock, 
   ShieldAlert, 
@@ -23,9 +21,8 @@ export default function App() {
   const [authError, setAuthError] = useState("");
   const [authLoading, setAuthLoading] = useState(true);
 
-  // Layout & Theme states
+  // Layout states
   const [activeTab, setActiveTab] = useState("review");
-  const [theme, setTheme] = useState(localStorage.getItem("prhawk_theme") || "light");
   
   // Toast notifications state
   const [toasts, setToasts] = useState([]);
@@ -69,19 +66,11 @@ export default function App() {
     checkAuthStatus();
   }, [accessKey]);
 
-  // Apply theme class to document body
+  // Ensure body dark mode is always disabled since the dark mode feature is removed
   useEffect(() => {
-    if (theme === "dark") {
-      document.body.classList.add("dark");
-    } else {
-      document.body.classList.remove("dark");
-    }
-    localStorage.setItem("prhawk_theme", theme);
-  }, [theme]);
-
-  const toggleTheme = () => {
-    setTheme(prev => (prev === "light" ? "dark" : "light"));
-  };
+    document.body.classList.remove("dark");
+    localStorage.removeItem("prhawk_theme");
+  }, []);
 
   const handleSaveKey = async (key) => {
     setAuthError("");
@@ -130,10 +119,16 @@ export default function App() {
       {/* Header */}
       <header className="app-header">
         <div className="brand" onClick={() => setActiveTab("review")}>
-          <div className="brand-icon">PH</div>
+          <div className="brand-logo-mark">
+            <svg width="28" height="28" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M16 2L30 16L16 30L2 16L16 2Z" stroke="var(--terra)" strokeWidth="2.5" strokeLinejoin="round"/>
+              <path d="M16 9L23 16L16 23" stroke="var(--terra)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+              <circle cx="12" cy="16" r="2.5" fill="var(--terra)" />
+            </svg>
+          </div>
           <div className="brand-title">
-            <h1>PRHawk</h1>
-            <p>AI Code Review Copilot</p>
+            <h1>Code<span className="brand-title-accent">Reviewer</span><span className="brand-title-dot">.</span></h1>
+            <p className="brand-subtitle">AI Code Intelligence</p>
           </div>
         </div>
 
@@ -155,11 +150,6 @@ export default function App() {
               Rules Manager
             </button>
           </div>
-
-          {/* Theme Toggle */}
-          <button onClick={toggleTheme} className="icon-btn" title="Toggle theme">
-            {theme === "light" ? <Moon size={18} /> : <Sun size={18} />}
-          </button>
 
           {/* Logout button if authenticated */}
           {authRequired && accessKey && (
